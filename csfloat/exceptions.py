@@ -1,0 +1,2 @@
+class CSFloatApiException(Exception):
+    pass
