@@ -22,7 +22,7 @@ class RestClient:
 
     def _do(self, http_method : str, endpoint:str,ep_params: Dict = None, data: Dict = None) ->Result: 
         full_url = self.url + endpoint
-        headers = {'Authorization': self.api_key}
+        headers = {'Authorization': self._api_key}
 
         log_line_pre = f"method={http_method}, url={full_url}, params={ep_params}"
         log_line_post = ', '.join((log_line_pre, "success={}, status_code={}, message={}"))
