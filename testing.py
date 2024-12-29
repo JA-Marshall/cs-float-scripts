@@ -6,8 +6,10 @@ import os
 def main() -> None:
     api_key : str = load_api_key()
     csfloat = CSFloatApi(api_key=api_key)
-    result = csfloat.get_buy_orders()
-    print(result.data)
+    buy_orders = csfloat.get_buy_orders()
+    for buy_order in buy_orders:
+        print(buy_order)
+
 
 def load_api_key() -> str:
     load_dotenv('.env')
