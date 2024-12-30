@@ -46,7 +46,7 @@ class CSFloatApi:
         endpoint = "/v1/me/buy-orders"
         orders = self._page(endpoint=endpoint)
 
-        # Transform the raw data into BuyOrder objects
+        
         return [BuyOrder(**order) for order in orders]
         
     def get_item_buy_orders(self,listing_id: str) -> List[BuyOrder]:
