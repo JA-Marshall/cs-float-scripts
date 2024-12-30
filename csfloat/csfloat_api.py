@@ -1,8 +1,9 @@
 import logging
 from csfloat.rest_client import RestClient
 from csfloat.exceptions import CSFloatApiException
-from csfloat.models import BuyOrder
+from csfloat.models import BuyOrder,Listing
 from typing import List,Dict
+import pprint
 
 class CSFloatApi:
     def __init__(self, api_key: str,logger: logging.Logger = None,hostname:str='csfloat.com/api'):
@@ -37,7 +38,7 @@ class CSFloatApi:
             
         return all_data
 
-
+    #undoccumented api
     def get_our_buy_orders(self) -> List[BuyOrder]:
         """Returns our current active buy orderes on csfloat 
 
@@ -49,30 +50,52 @@ class CSFloatApi:
 
         
         return [BuyOrder(**order) for order in orders]
-        
-    def get_item_buy_orders(self,listing_id: str) -> List[BuyOrder]:
-        """Get a list of the top buy orders for a given listing ID on csfloat.
-           a listing ID has to be used to fetch the data, even though all buy order data is the same for a given market hash name
-           
-
-        Args:
-            listing_id (str): requires a csfloat listing ID, buy order ID can't be used 
-
-        Returns:
-            List[BuyOrder]: Returns a list of buy order objects. 
-        """
-
-        pass
     
-    def create_buy_order(self):
+    #undoccumented api
+    def get_item_buy_orders(self,listing_id: str) -> List[BuyOrder]:
+        
+
         pass
+    ##undocumented API - doesn't work think i need to auth with a cookie to POST
+    def create_buy_order(self,market_hash_name : str, max_price: str, quantity: str):
+        endpoint = '/v1/buy-orders'
+        params = {'market_hash_name' : market_hash_name,
+                  'max_price': max_price,
+                  'quantity' : quantity}
+        
+        result = self._rest_adapter.post(endpoint=endpoint,ep_params=params)
+    
+        if result.status_code == 200:
+            return True
+        return False
+    
     def remove_buy_order(self):
         pass
-    def get_listings_from_market_hash(self,market_hash: str,limit: int = 1,sort_by: str = "lowest_price",type: str = "buy_now") -> List: #list[Listing]
+    def get_listings_from_market_hash(self,market_hash: str,limit: int = 1,sort_by: str = "lowest_price",type: str = "buy_now") -> List[Listing]:
+        """Get listings on csfloat given a specific market hash
+        https://docs.csfloat.com/#introduction
+
+        Args:
+            market_hash (str): An item market hash on CS Float
+            limit (int, optional): The amount of listings to fetch, Defaulted to 1 
+            sort_by (str, optional): The sorting of listings Defaults to "lowest_price".
+            type (str, optional): Listing type Defaults to "buy_now".
+
+        Returns:
+            List[Listing]: Returns a List containing Listing objects with data about the listing
+        """
         endpoint = "/v1/listings"
         params = {"market_hash_name" : market_hash, "limit" : limit, sort_by : sort_by, type: type}
         result = self._rest_adapter.get(endpoint=endpoint,ep_params=params)
-        return result.data
+        
+        data = result.data['data']
+        listings = []
+        for item in data:
+            flattened_data = {**item, **item.pop("item", {})}  # Flatten 'item' fields into the main dictionary
+            listings.append(Listing(**flattened_data))  
+        
+        return listings
+        
 
     def get_balance(self):
         pass
