@@ -3,14 +3,17 @@ from csfloat.models import *
 from dotenv import load_dotenv
 import os
 import logging
+import pprint
 
 def main() -> None:
     logger = configure_logging()
     api_key : str = load_api_key()
     csfloat = CSFloatApi(api_key=api_key,logger=logger)
     buy_orders = csfloat.get_our_buy_orders()
+    for buy_order in buy_orders:
+        print(buy_order)
     listings = csfloat.get_listings_from_market_hash(market_hash="Gamma Case")
-    
+    pprint.pp(listings)
 
 
 def load_api_key() -> str:

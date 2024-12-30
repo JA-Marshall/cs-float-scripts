@@ -72,7 +72,7 @@ class CSFloatApi:
         endpoint = "/v1/listings"
         params = {"market_hash_name" : market_hash, "limit" : limit, sort_by : sort_by, type: type}
         result = self._rest_adapter.get(endpoint=endpoint,ep_params=params)
-        print(result.data)
+        return result.data
 
     def get_balance(self):
         pass

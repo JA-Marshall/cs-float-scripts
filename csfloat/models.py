@@ -1,6 +1,10 @@
 from typing import List,Dict,Optional
 from dataclasses import dataclass
 
+from pydantic import BaseModel
+
+
+
 @dataclass
 class Result:
     """
@@ -13,18 +17,43 @@ class Result:
     message: str = ''
     data: Optional[List[Dict]] = None
 
-@dataclass
-class BuyOrder:
+
+class BuyOrder(BaseModel):
     """
-    Data strucutre representing a buy order on csfloat
-    :param id: id for a given buy order
+    Data structure representing a buy order on csfloat
+    :param id: ID for a given buy order
     :param created_at: Date when the buy order was created
-    :param market_hash_name: name for a given item on csfloat
-    :param qty: quantity the buy order is for 
-    :param price: bid price of the buy order 
+    :param market_hash_name: Name for a given item on csfloat
+    :param qty: Quantity the buy order is for 
+    :param price: Bid price of the buy order 
     """
     id: str
     created_at: str
     market_hash_name: str
     qty: int
     price: int
+
+
+class Listing(BaseModel):
+    created_at: str
+    type: str
+    id: str
+    price: int
+
+    
+
+# @dataclass
+# class BuyOrder:
+#     """
+#     Data strucutre representing a buy order on csfloat
+#     :param id: id for a given buy order
+#     :param created_at: Date when the buy order was created
+#     :param market_hash_name: name for a given item on csfloat
+#     :param qty: quantity the buy order is for 
+#     :param price: bid price of the buy order 
+#     """
+#     id: str
+#     created_at: str
+#     market_hash_name: str
+#     qty: int
+#     price: int
