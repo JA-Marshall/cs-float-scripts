@@ -6,7 +6,7 @@ import os
 def main() -> None:
     api_key : str = load_api_key()
     csfloat = CSFloatApi(api_key=api_key)
-    buy_orders = csfloat.get_buy_orders()
+    buy_orders = csfloat.get_our_buy_orders()
     for buy_order in buy_orders:
         print(buy_order)
 
