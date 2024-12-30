@@ -8,9 +8,33 @@ class CSFloatApi:
     def __init__(self, api_key: str,logger: logging.Logger = None,hostname:str='csfloat.com/api'):
         self._rest_adapter = RestClient(hostname, api_key, logger)
     
-    #assuming this is 100 for most things, but will change if its not 
-    def _page(self,  endpoint:str,items_per_page: str = 100,) -> List[Dict]:
-        pass
+    def _page(self, endpoint: str, items_per_page: int = 100) -> List[Dict]:
+
+        """
+        Pagination function to retrieve all items from an endpoint.
+
+        Args:
+            endpoint (str):  endpoint to fetch data from.
+            items_per_page (int): Number of items per page, defaulted to 100
+
+        Returns:
+            List[Dict]: List of all items retrieved from the endpoint.
+        """
+        result = self._rest_adapter.get(f'{endpoint}?page=0&limit={items_per_page}')
+        total_count = result.data['count']
+        all_data = result.data['orders']
+
+        
+        total_pages = total_count // items_per_page
+        if total_count % items_per_page != 0:
+            total_pages += 1
+
+       
+        for page in range(1, total_pages):
+            result = self._rest_adapter.get(f'{endpoint}?page={page}&limit={items_per_page}')
+            all_data.extend(result.data['orders'])
+            
+        return all_data
 
 
     def get_our_buy_orders(self) -> List[BuyOrder]:
@@ -20,13 +44,11 @@ class CSFloatApi:
             List[BuyOrder]: Returns a list of buy order objects. 
         """
         endpoint = "/v1/me/buy-orders"
-        result = self._rest_adapter.get(endpoint=f'{endpoint}?page=0&limit=100')
-        count = result.data['count']
-        if count <= 100:
-            buy_orders = [BuyOrder(**order) for order in result.data['orders']]
-            return buy_orders
-        self._page()
-    
+        orders = self._page(endpoint=endpoint)
+
+        # Transform the raw data into BuyOrder objects
+        return [BuyOrder(**order) for order in orders]
+        
     def get_item_buy_orders(self,listing_id: str) -> List[BuyOrder]:
         """Get a list of the top buy orders for a given item on csfloat.
 
