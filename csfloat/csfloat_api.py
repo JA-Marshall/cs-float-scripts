@@ -53,17 +53,36 @@ class CSFloatApi:
     
     #undoccumented api
     def get_item_buy_orders(self,listing_id: str) -> List[BuyOrder]:
-        
+        """Get a list of the top buy orders for a given listing ID on csfloat.
+           a listing ID has to be used to fetch the data, even though all buy order data is the same for a given market hash name
+           
+
+        Args:
+            listing_id (str): requires a csfloat listing ID, buy order ID can't be used 
+
+        Returns:
+            List[BuyOrder]: Returns a list of buy order objects. 
+        """
 
         pass
-    ##undocumented API - doesn't work think i need to auth with a cookie to POST
-    def create_buy_order(self,market_hash_name : str, max_price: str, quantity: str):
+    
+    def create_buy_order(self,market_hash_name : str, max_price: str, quantity: str)-> bool:
+        """Create a buy order on csfloat, 
+
+        Args:
+            market_hash_name (str): market hash name for the item we want to place a buy order
+            max_price (str): price for the item IN CENTS, $0.50 == 50, $19.99 = 1999
+            quantity (str): The quantity of items you want the buy order to be for
+
+        Returns:
+            bool: Returns True/False depending on if we sucessfully place the order
+        """
         endpoint = '/v1/buy-orders'
-        params = {'market_hash_name' : market_hash_name,
+        data = {'market_hash_name' : market_hash_name,
                   'max_price': max_price,
                   'quantity' : quantity}
         
-        result = self._rest_adapter.post(endpoint=endpoint,ep_params=params)
+        result = self._rest_adapter.post(endpoint=endpoint,data=data)
     
         if result.status_code == 200:
             return True
