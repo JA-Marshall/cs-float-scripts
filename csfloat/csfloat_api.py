@@ -138,6 +138,16 @@ class CSFloatApi:
         return listings
         
 
-    def get_balance(self):
-        pass
+    def get_balance(self) -> int:
+        """get our current balance on csfloat
+
+        Returns:
+            int: returns an int representing our balance on csfloat
+        """
+        endpoint = "/v1/me"
+        result = self._rest_adapter.get(endpoint=endpoint)
+        data = result.data['user']
+        balance = data['balance']
+        
+        return balance
 
