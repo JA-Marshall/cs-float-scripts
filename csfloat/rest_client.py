@@ -20,7 +20,7 @@ class RestClient:
         self._logger = logger or logging.getLogger(__name__)
 
 
-    def _do(self, http_method : str, endpoint:str,ep_params: Dict = None, data: Dict = None) ->Result: 
+    def _do(self, http_method : str, endpoint:str,ep_params: Dict = None, data: Dict = None,body: Dict = None) ->Result: 
         full_url = self.url + endpoint
         headers = {"Content-Type": "application/json","Authorization": self._api_key,}
         log_line_pre = f"method={http_method}, url={full_url}, params={ep_params}"
@@ -54,6 +54,7 @@ class RestClient:
     
     def get(self, endpoint: str, ep_params: Dict = None) -> Result:
         return self._do(http_method='GET', endpoint=endpoint, ep_params=ep_params)
-
     def post(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
         return self._do(http_method='POST', endpoint=endpoint, ep_params=ep_params, data=data)
+    def delete(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
+        return self._do(http_method='DELETE', endpoint=endpoint, ep_params=ep_params, data=data)

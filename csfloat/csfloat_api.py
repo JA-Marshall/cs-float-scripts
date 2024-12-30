@@ -65,7 +65,7 @@ class CSFloatApi:
         """
 
         pass
-    
+
     def create_buy_order(self,market_hash_name : str, max_price: str, quantity: str)-> bool:
         """Create a buy order on csfloat, 
 
@@ -88,8 +88,23 @@ class CSFloatApi:
             return True
         return False
     
-    def remove_buy_order(self):
-        pass
+    def remove_buy_order(self,id : str) -> bool:
+        """Remove a buy order from csfloat
+
+        Args:
+            id (str): ID of a buy order on csfloat
+
+        Returns:
+            bool: Returns True or False if the request was successful 
+        """
+
+        endpoint = f'/v1/buy-orders/{id}'
+        result = self._rest_adapter.delete(endpoint=endpoint)
+        if result.status_code == 200:
+            return True
+        return False
+
+        
     def get_listings_from_market_hash(self,market_hash: str,limit: int = 1,sort_by: str = "lowest_price",type: str = "buy_now") -> List[Listing]:
         """Get listings on csfloat given a specific market hash
         https://docs.csfloat.com/#introduction
