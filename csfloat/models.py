@@ -18,11 +18,24 @@ class Result:
     data: Optional[List[Dict]] = None
 
 
-class BuyOrder(BaseModel):
+class MarketBuyOrder(BaseModel):
     """
     Data structure representing a buy order on csfloat
-    :param id: ID for a given buy order
-    :param created_at: Date when the buy order was created
+  
+    :param market_hash_name: Name for a given item on csfloat
+    :param qty: Quantity the buy order is for 
+    :param price: Bid price of the buy order 
+    """
+  
+    market_hash_name: str
+    qty: int
+    price: int
+
+class OurBuyOrder(BaseModel):
+    """
+    Data structure representing our buy order on csfloat, with 
+    :param id: id for a buy order, required when we want do delete a buy order
+    :param created_at: timestamp for when the buy order was created  in ISO 8601 "2024-12-30T23:02:47.781696Z" format
     :param market_hash_name: Name for a given item on csfloat
     :param qty: Quantity the buy order is for 
     :param price: Bid price of the buy order 
@@ -33,18 +46,6 @@ class BuyOrder(BaseModel):
     qty: int
     price: int
 
-class Item(BaseModel):
-    """
-    Represents an item in a marketplace listing.
-
-    Attributes:
-        market_hash_name (str): The market hash name of the item, used to identify it uniquely in the marketplace.
-        is_commodity (bool): Indicates whether the item is a commodity (true if all instances of the item are identical).
-        type_name (str): The category or type of the item (e.g., "Container").
-    """
-    market_hash_name: str
-    is_commodity: bool
-    type_name: str
 
 
 class Listing(BaseModel):

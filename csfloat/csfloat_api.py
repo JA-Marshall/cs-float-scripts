@@ -1,7 +1,7 @@
 import logging
 from csfloat.rest_client import RestClient
 from csfloat.exceptions import CSFloatApiException
-from csfloat.models import BuyOrder,Listing
+from csfloat.models import OurBuyOrder,MarketBuyOrder,Listing
 from typing import List,Dict
 import pprint
 
@@ -39,20 +39,20 @@ class CSFloatApi:
         return all_data
 
     #undoccumented api
-    def get_our_buy_orders(self) -> List[BuyOrder]:
+    def get_our_buy_orders(self) -> List[OurBuyOrder]:
         """Returns our current active buy orderes on csfloat 
 
         Returns:
-            List[BuyOrder]: Returns a list of buy order objects. 
+            List[OurBuyOrder]: Returns a list of buy order objects. 
         """
         endpoint = "/v1/me/buy-orders"
         orders = self._page(endpoint=endpoint)
 
         
-        return [BuyOrder(**order) for order in orders]
+        return [OurBuyOrder(**order) for order in orders]
     
     #undoccumented api
-    def get_item_buy_orders(self,listing_id: str) -> List[BuyOrder]:
+    def get_item_buy_orders(self,listing_id: str) -> List[MarketBuyOrder]:
         """Get a list of the top buy orders for a given listing ID on csfloat.
            a listing ID has to be used to fetch the data, even though all buy order data is the same for a given market hash name
            
@@ -61,10 +61,17 @@ class CSFloatApi:
             listing_id (str): requires a csfloat listing ID, buy order ID can't be used 
 
         Returns:
-            List[BuyOrder]: Returns a list of buy order objects. 
+            List[MarketBuyOrder]: Returns a list of buy order objects. 
         """
+        endpoint = f'/v1/listings/{listing_id}/buy-orders?limit=10'
+        result = self._rest_adapter.get(endpoint=endpoint)
+        
+        #Get rid of all buy orders with specific float/condition requirements,
+        #not an ideal solution 
+        filtered_data = [order for order in result.data if "expression" not in order]
+        return [MarketBuyOrder(**order) for order in filtered_data]
 
-        pass
+        
 
     def create_buy_order(self,market_hash_name : str, max_price: str, quantity: str)-> bool:
         """Create a buy order on csfloat, 
