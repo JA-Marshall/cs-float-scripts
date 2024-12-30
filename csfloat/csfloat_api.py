@@ -20,7 +20,8 @@ class CSFloatApi:
         Returns:
             List[Dict]: List of all items retrieved from the endpoint.
         """
-        result = self._rest_adapter.get(f'{endpoint}?page=0&limit={items_per_page}')
+        
+        result = self._rest_adapter.get(endpoint=endpoint,ep_params={'page': 0, 'limit' : items_per_page})
         total_count = result.data['count']
         all_data = result.data['orders']
 
@@ -31,7 +32,7 @@ class CSFloatApi:
 
        
         for page in range(1, total_pages):
-            result = self._rest_adapter.get(f'{endpoint}?page={page}&limit={items_per_page}')
+            result = self._rest_adapter.get(endpoint=endpoint,params={'page': page, 'limit' : items_per_page})
             all_data.extend(result.data['orders'])
             
         return all_data
@@ -50,7 +51,9 @@ class CSFloatApi:
         return [BuyOrder(**order) for order in orders]
         
     def get_item_buy_orders(self,listing_id: str) -> List[BuyOrder]:
-        """Get a list of the top buy orders for a given item on csfloat.
+        """Get a list of the top buy orders for a given listing ID on csfloat.
+           a listing ID has to be used to fetch the data, even though all buy order data is the same for a given market hash name
+           
 
         Args:
             listing_id (str): requires a csfloat listing ID, buy order ID can't be used 
@@ -60,11 +63,17 @@ class CSFloatApi:
         """
 
         pass
+    
     def create_buy_order(self):
         pass
     def remove_buy_order(self):
         pass
-    
+    def get_listings_from_market_hash(self,market_hash: str,limit: int = 1,sort_by: str = "lowest_price",type: str = "buy_now") -> List: #list[Listing]
+        endpoint = "/v1/listings"
+        params = {"market_hash_name" : market_hash, "limit" : limit, sort_by : sort_by, type: type}
+        result = self._rest_adapter.get(endpoint=endpoint,ep_params=params)
+        print(result.data)
+
     def get_balance(self):
         pass
 
