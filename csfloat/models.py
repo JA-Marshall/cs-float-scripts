@@ -1,4 +1,4 @@
-from typing import List,Dict,Optional
+from typing import List, Dict, Optional
 from dataclasses import dataclass
 
 from pydantic import BaseModel
@@ -68,4 +68,3 @@ class Listing(BaseModel):
     market_hash_name: str
     is_commodity: bool
     type_name: str
-

@@ -1,12 +1,12 @@
 import requests 
-from typing import List,Dict
+from typing import List, Dict
 from csfloat.exceptions import CSFloatApiException
 from csfloat.models import Result
 from json import JSONDecodeError
 import logging
 
 class RestClient:
-    def __init__(self,hostname:str, api_key: str,logger: logging.Logger = None):
+    def __init__(self, hostname: str, api_key: str, logger: logging.Logger = None):
         """
         Constructor for RestClient
         :param hostname: api hostname, eg csfloat.com/api/v1
@@ -20,9 +20,9 @@ class RestClient:
         self._logger = logger or logging.getLogger(__name__)
 
 
-    def _do(self, http_method : str, endpoint:str,ep_params: Dict = None, data: Dict = None,body: Dict = None) ->Result: 
+    def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result: 
         full_url = self.url + endpoint
-        headers = {"Content-Type": "application/json","Authorization": self._api_key,}
+        headers = {"Content-Type": "application/json", "Authorization": self._api_key}
         log_line_pre = f"method={http_method}, url={full_url}, params={ep_params}"
         log_line_post = "success={}, status_code={}, message={}"
 
@@ -46,7 +46,7 @@ class RestClient:
         if is_success: 
             self._logger.debug(msg=log_line)
             
-            return Result(response.status_code,message=response.reason,data=data_out)
+            return Result(response.status_code, message=response.reason, data=data_out)
         
         self._logger.error(msg=log_line)
         self._logger.error(msg=response.json())

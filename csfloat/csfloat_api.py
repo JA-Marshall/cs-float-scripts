@@ -1,12 +1,11 @@
 import logging
 from csfloat.rest_client import RestClient
-from csfloat.exceptions import CSFloatApiException
 from csfloat.models import OurBuyOrder,MarketBuyOrder,Listing
-from typing import List,Dict
-import pprint
+from typing import List, Dict
+
 
 class CSFloatApi:
-    def __init__(self, api_key: str,logger: logging.Logger = None,hostname:str='csfloat.com/api'):
+    def __init__(self, api_key: str, logger: logging.Logger = None, hostname: str = 'csfloat.com/api'):
         self._rest_adapter = RestClient(hostname, api_key, logger)
     
     def _page(self, endpoint: str, items_per_page: int = 100) -> List[Dict]:
@@ -38,9 +37,9 @@ class CSFloatApi:
             
         return all_data
 
-    #undoccumented api
+    # undocumented api
     def get_our_buy_orders(self) -> List[OurBuyOrder]:
-        """Returns our current active buy orderes on csfloat 
+        """Returns our current active buy orders on csfloat 
 
         Returns:
             List[OurBuyOrder]: Returns a list of buy order objects. 
@@ -51,8 +50,8 @@ class CSFloatApi:
         
         return [OurBuyOrder(**order) for order in orders]
     
-    #undoccumented api
-    def get_item_buy_orders(self,listing_id: str) -> List[MarketBuyOrder]:
+    # undocumented api
+    def get_item_buy_orders(self, listing_id: str) -> List[MarketBuyOrder]:
         """Get a list of the top buy orders for a given listing ID on csfloat.
            a listing ID has to be used to fetch the data, even though all buy order data is the same for a given market hash name
            
@@ -66,14 +65,14 @@ class CSFloatApi:
         endpoint = f'/v1/listings/{listing_id}/buy-orders?limit=10'
         result = self._rest_adapter.get(endpoint=endpoint)
         
-        #Get rid of all buy orders with specific float/condition requirements,
-        #not an ideal solution 
+        # Get rid of all buy orders with specific float/condition requirements,
+        # not an ideal solution 
         filtered_data = [order for order in result.data if "expression" not in order]
         return [MarketBuyOrder(**order) for order in filtered_data]
 
         
 
-    def create_buy_order(self,market_hash_name : str, max_price: str, quantity: str)-> bool:
+    def create_buy_order(self, market_hash_name: str, max_price: str, quantity: str) -> bool:
         """Create a buy order on csfloat, 
 
         Args:
@@ -82,7 +81,7 @@ class CSFloatApi:
             quantity (str): The quantity of items you want the buy order to be for
 
         Returns:
-            bool: Returns True/False depending on if we sucessfully place the order
+            bool: Returns True/False depending on if we successfully place the order
         """
         endpoint = '/v1/buy-orders'
         data = {'market_hash_name' : market_hash_name,
@@ -95,7 +94,7 @@ class CSFloatApi:
             return True
         return False
     
-    def remove_buy_order(self,id : str) -> bool:
+    def remove_buy_order(self, id: str) -> bool:
         """Remove a buy order from csfloat
 
         Args:
@@ -112,7 +111,7 @@ class CSFloatApi:
         return False
 
         
-    def get_listings_from_market_hash(self,market_hash: str,limit: int = 1,sort_by: str = "lowest_price",type: str = "buy_now") -> List[Listing]:
+    def get_listings_from_market_hash(self, market_hash: str, limit: int = 1, sort_by: str = "lowest_price", type: str = "buy_now") -> List[Listing]:
         """Get listings on csfloat given a specific market hash
         https://docs.csfloat.com/#introduction
 
@@ -126,7 +125,7 @@ class CSFloatApi:
             List[Listing]: Returns a List containing Listing objects with data about the listing
         """
         endpoint = "/v1/listings"
-        params = {"market_hash_name" : market_hash, "limit" : limit, sort_by : sort_by, type: type}
+        params = {"market_hash_name": market_hash, "limit": limit, sort_by: sort_by, type: type}
         result = self._rest_adapter.get(endpoint=endpoint,ep_params=params)
         
         data = result.data['data']
